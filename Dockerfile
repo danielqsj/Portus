@@ -1,12 +1,14 @@
 FROM library/rails:4.2.2
-MAINTAINER Flavio Castelli <fcastelli@suse.com>
+MAINTAINER Steve Shipway <s.shipway@auckland.ac.nz>
 
+ENV RAILS_ENV=production
 ENV COMPOSE=1
-EXPOSE 3000
+ENV CATALOG_CRON="5.minutes"
 
 WORKDIR /portus
-COPY Gemfile* ./
-RUN bundle install --retry=3
+
+EXPOSE 3000
+
 
 # Install phantomjs, this is required for testing and development purposes
 # There are no official deb packages for it, hence we built it inside of the
@@ -20,3 +22,16 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ADD . .
+
+RUN apt-get update && apt-get install -y telnet ldap-utils
+COPY Gemfile* ./
+RUN bundle install --retry=3
+
+RUN mkdir -p /etc/nginx/conf.d
+VOLUME /etc/nginx/conf.d
+
+# Run this command to start it up
+ENTRYPOINT ["/bin/bash","/portus/startup.sh"]
+# Default arguments to pass to puma
+CMD ["-b","tcp://0.0.0.0:3000","-w","3"]
+

@@ -47,6 +47,10 @@ class RegistryMock < Registry
       def o.tags(*_)
         ["latest", "0.1"]
       end
+
+      def o.tags(*_)
+        ["latest", "0.1"]
+      end
     end
     o
   end
