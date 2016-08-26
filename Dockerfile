@@ -1,5 +1,5 @@
 FROM library/rails:4.2.2
-MAINTAINER Steve Shipway <s.shipway@auckland.ac.nz>
+MAINTAINER Daniel Qian <qsj.daniel@gmail.com>
 
 ENV RAILS_ENV=production
 ENV COMPOSE=1
@@ -8,7 +8,6 @@ ENV CATALOG_CRON="5.minutes"
 WORKDIR /portus
 
 EXPOSE 3000
-
 
 # Install phantomjs, this is required for testing and development purposes
 # There are no official deb packages for it, hence we built it inside of the
@@ -24,7 +23,8 @@ RUN apt-get update && \
 ADD . .
 
 RUN apt-get update && apt-get install -y telnet ldap-utils
-COPY Gemfile* ./
+#COPY Gemfile* ./
+COPY Gemfile ./
 RUN bundle install --retry=3
 
 RUN mkdir -p /etc/nginx/conf.d
